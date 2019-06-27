@@ -10,7 +10,11 @@ db.authenticate()
 .catch(err => console.log("Error:"+err));
 
 const app = express();
-
+//Insert middleware for handlebars
+app.engine('handlebars', exphbs({defaultLayout:'main'})); //Layout wraps all the views
+//Set static folder
+app.use(express.static(path.join(__dirname,'public')))
+app.set('view engine', 'handlebars')
 //Add a route that is loading a homepage
 app.get('/', (req, res)=>{
     res.send('hello');

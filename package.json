@@ -1,7 +1,7 @@
 {
   "name": "codegig",
   "version": "1.0.0",
-  "description": "Small job finmder app",
+  "description": "Small job finder app",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
