@@ -11,8 +11,14 @@ router.get('/', (req,res)=>Gig.findAll()
 })
 .catch(err=>console.log("Error:"+err))); // The findAll() method returns a proomise
 
-//Add a gig, will receive a post request--NEVER ADD DATA WITH A GET
+//Display the add gig form
+router.get('/add', (req,res)=>{
+    res.render('add');
 
+}
+)
+
+//Add a gig, will receive a post request--NEVER ADD DATA WITH A GET
 router.get('/add', (req,res)=>{
     const data = {
         title:'Wordpress smart guy',

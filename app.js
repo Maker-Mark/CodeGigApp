@@ -19,7 +19,7 @@ app.set('view engine', 'handlebars')
 
 //Add a route that is loading a homepage
 app.get('/', (req, res)=>{
-    res.send('hello');
+    res.render('index', {layout:'landing'});
 });
 
 //Point /Gig to this require (using middleware)
