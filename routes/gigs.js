@@ -9,37 +9,62 @@ router.get('/', (req,res)=>Gig.findAll()
     console.log(gigs); //Log the query!
     res.render('gigs', {gigs});
 })
-.catch(err=>console.log("Error:"+err))); // The findAll() method returns a proomise
+.catch(err=>console.log("Error:"+err))); // The findAll() method returns a promise
 
 //Display the add gig form
 router.get('/add', (req,res)=>{
     res.render('add');
-
 }
 )
 
 //Add a gig, will receive a post request--NEVER ADD DATA WITH A GET
-router.get('/add', (req,res)=>{
-    const data = {
-        title:'Wordpress smart guy',
-        technologies:'wordpress,static sites, java, html',
-        budget:'$9001',
-        description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
-        contact_email: 'user2@gmail.com',
-    }
+router.post('/add', (req,res)=>{
+   
     //Destructure the data and make all of them local vars
-    let {title,technologies,budget,description,contact_email} = data
-    //Insert into the table. .create returns a promise
-    Gig.create({
+    let {title, technologies, budget, description, contact_email} = req.body;//The body will have all the data
+    //Validation: If no data, push on object that has text value telling user to add a title
+    let errors = [];
+    if(!title){
+        errors.push({
+            text:'Please add a title...'
+        });
+    }
+    if(!technologies){
+        errors.push({
+            text:'Please add technologies...'
+        });
+    }
+    if(!description){
+        errors.push({
+            text:'Please add a description...'
+        });
+    }
+    if(!contact_email){
+        errors.push({
+            text:'Please add a contact email...'
+        });
+    }
+
+    if(errors.length  > 0){
+        //rerender the form with the values
+       res.render('add', 
+       {
+       errors, title,technologies,budget,description,contact_email
+       }) 
+    }
+    else{
+       //Insert into the table. .create returns a promise
+       Gig.create({
         title,
         technologies,
-        budget,
         description,
+        budget,
         contact_email
-    })
+      })
     .then(gig=> res.redirect('/gigs'))
     .catch(err=>console.log("Error:"+err));
-})
-
+      
+    }
+});
 
 module.exports = router;

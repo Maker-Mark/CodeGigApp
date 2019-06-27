@@ -13,6 +13,9 @@ const app = express();
 //Insert middleware for handlebars
 app.engine('handlebars', exphbs({defaultLayout:'main'})); //Layout wraps all the views
 
+//Insert body parser middleware
+app.use(bodyParser.urlencoded({extended:false}));
+
 //Set static folder
 app.use(express.static(path.join(__dirname,'public')))
 app.set('view engine', 'handlebars')
@@ -26,4 +29,5 @@ app.get('/', (req, res)=>{
 app.use('/gigs', require('./routes/gigs'));
 
 const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, console.log(`Server is running on port ${PORT}`));
