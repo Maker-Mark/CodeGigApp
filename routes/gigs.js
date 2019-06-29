@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/database');
 const Gig = require('../models/Gig');//Our model
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op; //Bring in the sequelize operator
 
 //Make a route for /gigs and get the list of gigs
 router.get('/', (req,res)=>Gig.findAll()
@@ -19,7 +21,6 @@ router.get('/add', (req,res)=>{
 
 //Add a gig, will receive a post request--NEVER ADD DATA WITH A GET
 router.post('/add', (req,res)=>{
-   
     //Destructure the data and make all of them local vars
     let {title, technologies, budget, description, contact_email} = req.body;//The body will have all the data
     //Validation: If no data, push on object that has text value telling user to add a title
@@ -45,14 +46,22 @@ router.post('/add', (req,res)=>{
         });
     }
 
-    if(errors.length  > 0){
+    if(errors.length  > 0 ){
         //rerender the form with the values
        res.render('add', 
        {
        errors, title,technologies,budget,description,contact_email
        }) 
-    }
-    else{
+    }else{
+        if(!budget){
+            budget='Unknown'
+        }else{
+            budget=`$${budget}`;
+        }
+
+        //Make technologies lowecase for db purposes
+        technologies= technologies.toLowerCase().replace(/, /g, ','); //Make it lower case and removes a space after a comma
+
        //Insert into the table. .create returns a promise
        Gig.create({
         title,
@@ -66,5 +75,15 @@ router.post('/add', (req,res)=>{
       
     }
 });
+
+//Seach for gigs. We are already in the gigs route in this file 
+router.get('/search', (req,res) => {
+    let {term} = req.query; 
+    term = term.toLowerCase();
+    //Use the LIKE operator. Find all that is: Anything TERM anything
+    Gig.findAll({where: {technologies: { [Op.like]:'%'+term+'%'}}})
+    .then(gigs=> res.render('gigs', {gigs}))
+    .catch(err=>console.log(err))
+})
 
 module.exports = router;
