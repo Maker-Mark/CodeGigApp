@@ -78,8 +78,8 @@ router.post('/add', (req,res)=>{
 
 //Seach for gigs. We are already in the gigs route in this file 
 router.get('/search', (req,res) => {
-    let {term} = req.query; 
-    term = term.toLowerCase();
+    let {term} = req.query; //Destructure out the term from the req.query
+    term = term.toLowerCase();//Turn the term into lowercase, since we used regex to make all our technologies lowercase.
     //Use the LIKE operator. Find all that is: Anything TERM anything
     Gig.findAll({where: {technologies: { [Op.like]:'%'+term+'%'}}})
     .then(gigs=> res.render('gigs', {gigs}))
